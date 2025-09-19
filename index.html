@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>予定管理表 - 備品予約システム</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 左ペイン: メニューバー -->
+        <div class="sidebar">
+            <div class="logo">
+                <h2>備品予約システム</h2>
+            </div>
+            
+            <nav class="menu">
+                <div class="menu-section">
+                    <h3>備品カテゴリ</h3>
+                    <ul class="equipment-list">
+                        <li class="equipment-item active" data-equipment="projector">
+                            <span class="equipment-icon">📽️</span>
+                            プロジェクター
+                        </li>
+                        <li class="equipment-item" data-equipment="conference-room">
+                            <span class="equipment-icon">🏢</span>
+                            会議室
+                        </li>
+                        <li class="equipment-item" data-equipment="laptop">
+                            <span class="equipment-icon">💻</span>
+                            ノートパソコン
+                        </li>
+                        <li class="equipment-item" data-equipment="camera">
+                            <span class="equipment-icon">📷</span>
+                            カメラ
+                        </li>
+                        <li class="equipment-item" data-equipment="microphone">
+                            <span class="equipment-icon">🎤</span>
+                            マイク
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="menu-section">
+                    <h3>操作</h3>
+                    <button class="action-btn" id="addReservationBtn">
+                        <span class="btn-icon">➕</span>
+                        新規予約
+                    </button>
+                    <button class="action-btn" id="viewAllBtn">
+                        <span class="btn-icon">📋</span>
+                        全体表示
+                    </button>
+                    <button class="action-btn" id="exportBtn">
+                        <span class="btn-icon">📤</span>
+                        エクスポート
+                    </button>
+                </div>
+                
+                <div class="menu-section">
+                    <h3>フィルター</h3>
+                    <div class="filter-options">
+                        <label>
+                            <input type="checkbox" id="showAvailable" checked>
+                            利用可能のみ表示
+                        </label>
+                        <label>
+                            <input type="checkbox" id="showReserved" checked>
+                            予約済みを表示
+                        </label>
+                        <label>
+                            <input type="checkbox" id="showMaintenance">
+                            メンテナンス中を表示
+                        </label>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        
+        <!-- 右ペイン: 予定表 -->
+        <div class="main-content">
+            <header class="content-header">
+                <div class="header-controls">
+                    <h1 id="currentEquipment">プロジェクター - 予定表</h1>
+                    <div class="date-navigation">
+                        <button class="nav-btn" id="prevWeek">◀ 前週</button>
+                        <span id="currentWeek">2024年9月16日 - 9月22日</span>
+                        <button class="nav-btn" id="nextWeek">次週 ▶</button>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="schedule-container">
+                <div class="schedule-table">
+                    <div class="time-column">
+                        <div class="time-header">時間</div>
+                        <div class="time-slot" data-time="09:00">09:00</div>
+                        <div class="time-slot" data-time="10:00">10:00</div>
+                        <div class="time-slot" data-time="11:00">11:00</div>
+                        <div class="time-slot" data-time="12:00">12:00</div>
+                        <div class="time-slot" data-time="13:00">13:00</div>
+                        <div class="time-slot" data-time="14:00">14:00</div>
+                        <div class="time-slot" data-time="15:00">15:00</div>
+                        <div class="time-slot" data-time="16:00">16:00</div>
+                        <div class="time-slot" data-time="17:00">17:00</div>
+                        <div class="time-slot" data-time="18:00">18:00</div>
+                    </div>
+                    
+                    <div class="days-container" id="daysContainer">
+                        <!-- 曜日列は JavaScript で動的に生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 予約モーダル -->
+    <div class="modal" id="reservationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>新規予約</h3>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="reservationForm">
+                    <div class="form-group">
+                        <label for="reservationTitle">予約タイトル:</label>
+                        <input type="text" id="reservationTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reservationUser">予約者:</label>
+                        <input type="text" id="reservationUser" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reservationDate">日付:</label>
+                        <input type="date" id="reservationDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reservationStartTime">開始時間:</label>
+                        <select id="reservationStartTime" required>
+                            <option value="09:00">09:00</option>
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                            <option value="12:00">12:00</option>
+                            <option value="13:00">13:00</option>
+                            <option value="14:00">14:00</option>
+                            <option value="15:00">15:00</option>
+                            <option value="16:00">16:00</option>
+                            <option value="17:00">17:00</option>
+                            <option value="18:00">18:00</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reservationEndTime">終了時間:</label>
+                        <select id="reservationEndTime" required>
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                            <option value="12:00">12:00</option>
+                            <option value="13:00">13:00</option>
+                            <option value="14:00">14:00</option>
+                            <option value="15:00">15:00</option>
+                            <option value="16:00">16:00</option>
+                            <option value="17:00">17:00</option>
+                            <option value="18:00">18:00</option>
+                            <option value="19:00">19:00</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="reservationNotes">備考:</label>
+                        <textarea id="reservationNotes" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" id="cancelReservation">キャンセル</button>
+                        <button type="submit" class="submit-btn">予約する</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
