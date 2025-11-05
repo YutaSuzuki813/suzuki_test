@@ -1,0 +1,7 @@
+# Test directories
+02/
+06/
+
+# Test files
+copyfile_test.txt
+test_copy.sh
