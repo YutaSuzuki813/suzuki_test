@@ -23,11 +23,6 @@ set "DEFAULT_LIST_FILE=.\copyfile.txt"
 REM =====================================================
 
 REM =====================================================
-REM カラー表示用のエスケープシーケンス設定
-REM =====================================================
-set "ESC="
-
-REM =====================================================
 REM ヘルプ表示
 REM =====================================================
 if "%~1"=="/?" goto :SHOW_HELP
@@ -147,16 +142,15 @@ set "TOTAL_COUNT=0"
 
 REM リストファイルを1行ずつ読み込み
 for /f "usebackq delims=" %%F in ("%LIST_FILE%") do (
-    set /a TOTAL_COUNT+=1
     set "FILE_PATH=%%F"
     
     REM コメント行やブランク行をスキップ
     if "!FILE_PATH:~0,1!"=="#" (
         echo [スキップ] コメント行: !FILE_PATH!
         set /a SKIP_COUNT+=1
-    ) else if "!FILE_PATH!"=="" (
-        set /a SKIP_COUNT+=1
-    ) else (
+        set /a TOTAL_COUNT+=1
+    ) else if not "!FILE_PATH!"=="" (
+        set /a TOTAL_COUNT+=1
         REM ソースファイルのフルパス
         set "SRC_FILE=%SRC_BASE%\!FILE_PATH!"
         set "DST_FILE=%DST_BASE%\!FILE_PATH!"
